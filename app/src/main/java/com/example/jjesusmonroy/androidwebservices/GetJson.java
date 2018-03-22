@@ -25,7 +25,7 @@ public class GetJson extends AsyncTask<Void,Void,Void> {
     @Override
     protected Void doInBackground(Void... voids) {
         try{
-            URL url = new URL("http://api.openweathermap.org/data/2.5/weather?q=Tepic,mx&APPID=0906362826d2cfea265ed029381a7e31");
+            URL url = new URL("https://api.coindesk.com/v1/bpi/currentprice.json");
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             InputStream inputStream = httpURLConnection.getInputStream();
             BufferedReader bufferedReader = new BufferedReader(new
@@ -36,22 +36,17 @@ public class GetJson extends AsyncTask<Void,Void,Void> {
                 data = data+line;
             }
             JSONObject jsonObject = new JSONObject(data);
-            JSONArray weather = new JSONArray(jsonObject.getString("weather"));
-            JSONObject weather2;
-            String description="";
-            for(int i=0;i<weather.length();i++){
-                weather2 = (JSONObject)weather.get(i);
-                description= weather2.getString("description");
-            }
-            JSONObject main = new JSONObject(jsonObject.getString("main"));
-            JSONObject sys = new JSONObject(jsonObject.getString("sys"));
-            singleParsed = "City: " + jsonObject.get("name") + "\n"
-                            + "Country: "+ sys.getString("country") +"\n"
-                            + "Description: "+ description+"\n"
-                            + "Temp : "+convertTemp(main.getString("temp_min"))+"\n"
-                            + "Humedad : " + main.getString("humidity")+"%\n";
-
-            dataParsed = dataParsed + singleParsed + "\n";
+            JSONObject time = new JSONObject(jsonObject.getString("time"));
+            JSONObject info = new JSONObject(jsonObject.getString("bpi"));
+            JSONObject usd = new JSONObject(info.getString("USD"));
+            JSONObject gbp = new JSONObject(info.getString("GBP"));
+            JSONObject eur = new JSONObject(info.getString("EUR"));
+            dataParsed = "updated :"+time.getString("updated")+"\n"
+                        +"Criptomoneda : "+jsonObject.getString("chartName")+"\n"
+                        +"USD :"+usd.getString("rate") +"\n"
+                        +"GBP :"+gbp.getString("rate")+"\n"
+                        +"EUR :"+eur.getString("rate")+"\n"
+                        +"about :"+jsonObject.getString("disclaimer");
 
         }catch(Exception e){
             e.printStackTrace();
